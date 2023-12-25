@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 
 void main() {
   runApp(const MyApp());
@@ -21,7 +22,10 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
+  const MyHomePage({
+    super.key,
+    required this.title,
+  });
 
   final String title;
 
@@ -30,40 +34,72 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
+  int target = 0;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(widget.title),
       ),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ],
+        child: ElevatedButton(
+          onPressed: () => showMyDialog(context),
+          child: const Text('Show Dialog'),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ),
     );
+  }
+
+  void showMyDialog(BuildContext context) {
+    final anchorKey = GlobalKey();
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          content: StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+              return SizedBox(
+                height: 400,
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: List<Widget>.generate(100, (index) {
+                      if (index == target) {
+                        return RadioListTile<int>(
+                          key: anchorKey,
+                          title: Text('$index <<< This is TargetIndex'),
+                          value: index,
+                          groupValue: target,
+                          onChanged: (int? value) {
+                            setState(() {
+                              target = value!;
+                            });
+                          },
+                        );
+                      }
+                      return RadioListTile<int>(
+                        title: Text('$index'),
+                        value: index,
+                        groupValue: target,
+                        onChanged: (int? value) {
+                          setState(() {
+                            target = value!;
+                          });
+                        },
+                      );
+                    }).toList(),
+                  ),
+                ),
+              );
+            },
+          ),
+        );
+      },
+    );
+
+    // ダイアログが開いたときに、アンカーアイテムを表示する
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      Scrollable.ensureVisible(anchorKey.currentContext!);
+    });
   }
 }
