@@ -57,42 +57,20 @@ class _MyHomePageState extends State<MyHomePage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          content: StatefulBuilder(
-            builder: (BuildContext context, StateSetter setState) {
-              return SizedBox(
-                height: 400,
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: List<Widget>.generate(100, (index) {
-                      if (index == target) {
-                        return RadioListTile<int>(
-                          key: anchorKey,
-                          title: Text('$index <<< This is TargetIndex'),
-                          value: index,
-                          groupValue: target,
-                          onChanged: (int? value) {
-                            setState(() {
-                              target = value!;
-                            });
-                          },
-                        );
-                      }
-                      return RadioListTile<int>(
-                        title: Text('$index'),
-                        value: index,
-                        groupValue: target,
-                        onChanged: (int? value) {
-                          setState(() {
-                            target = value!;
-                          });
-                        },
-                      );
-                    }).toList(),
+          content: StatefulBuilder(builder: (context, setState) {
+            return SizedBox(
+              height: 400,
+              child: SingleChildScrollView(
+                child: Column(
+                  children: _myRadioList(
+                    target,
+                    anchorKey,
+                    setState,
                   ),
                 ),
-              );
-            },
-          ),
+              ),
+            );
+          }),
         );
       },
     );
@@ -100,6 +78,30 @@ class _MyHomePageState extends State<MyHomePage> {
     // ダイアログが開いたときに、アンカーアイテムを表示する
     SchedulerBinding.instance.addPostFrameCallback((_) {
       Scrollable.ensureVisible(anchorKey.currentContext!);
+    });
+  }
+
+  List<Widget> _myRadioList(
+    int currentValue,
+    GlobalKey anchorKey,
+    StateSetter setState,
+  ) {
+    return List.generate(100, (index) {
+      final title =
+          index == currentValue ? '$index <<< This is TargetIndex' : '$index';
+      return RadioListTile<int>(
+        key: index == currentValue ? anchorKey : null,
+        title: Text(title),
+        value: index,
+        groupValue: currentValue,
+        onChanged: (int? value) {
+          if (value != null) {
+            setState(() {
+              target = value;
+            });
+          }
+        },
+      );
     });
   }
 }
