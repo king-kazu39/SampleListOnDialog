@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:sample_list_on_dialog/showdialog_with_riverpod.dart' as dialog;
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    const ProviderScope(
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -43,9 +49,18 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text(widget.title),
       ),
       body: Center(
-        child: ElevatedButton(
-          onPressed: () => showMyDialog(context),
-          child: const Text('Show Dialog'),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            ElevatedButton(
+              onPressed: () => showMyDialog(context),
+              child: const Text('Show Dialog'),
+            ),
+            ElevatedButton(
+              onPressed: () => dialog.showMyDialog(context),
+              child: const Text('Show Dialog with Riverpod'),
+            ),
+          ],
         ),
       ),
     );
