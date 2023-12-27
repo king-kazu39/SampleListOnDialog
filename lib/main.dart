@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sample_list_on_dialog/showdialog_with_riverpod.dart' as dialog;
 
@@ -41,6 +40,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int target = 0;
+  int tmpTarget = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -54,11 +54,11 @@ class _MyHomePageState extends State<MyHomePage> {
           children: [
             ElevatedButton(
               onPressed: () => showMyDialog(context),
-              child: const Text('Show Dialog'),
+              child: const Text('Show My Dialog'),
             ),
             ElevatedButton(
               onPressed: () => dialog.showMyDialog(context),
-              child: const Text('Show Dialog with Riverpod'),
+              child: const Text('Show My Dialog with Riverpod'),
             ),
           ],
         ),
@@ -68,40 +68,70 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void showMyDialog(BuildContext context) {
     final anchorKey = GlobalKey();
+    // ダイアログが開いたときに、アンカーアイテムを表示する
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Scrollable.ensureVisible(anchorKey.currentContext!);
+    });
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
           content: StatefulBuilder(builder: (context, setState) {
             return SizedBox(
-              height: 400,
-              child: SingleChildScrollView(
-                child: Column(
-                  children: _myRadioList(
-                    target,
-                    anchorKey,
-                    setState,
+              height: 550,
+              child: Column(
+                children: [
+                  Expanded(
+                    child: SingleChildScrollView(
+                      child: Column(
+                        children: _myRadioList(
+                          tmpTarget,
+                          anchorKey,
+                          setState,
+                        ),
+                      ),
+                    ),
                   ),
-                ),
+                  const SizedBox(height: 10),
+                  SizedBox(
+                    height: 50,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        ElevatedButton(
+                          onPressed: () {
+                            tmpTarget = 0;
+                            Navigator.pop(context);
+                          },
+                          child: const Text('キャンセル'),
+                        ),
+                        ElevatedButton(
+                          onPressed: () {
+                            target = tmpTarget;
+                            Navigator.pop(context);
+                          },
+                          child: const Text('OK'),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
             );
           }),
         );
       },
     );
-
-    // ダイアログが開いたときに、アンカーアイテムを表示する
-    SchedulerBinding.instance.addPostFrameCallback((_) {
-      Scrollable.ensureVisible(anchorKey.currentContext!);
-    });
   }
 
+  /// 100個まで要素があるラジオボタンのリスト(0~99)
   List<Widget> _myRadioList(
     int currentValue,
     GlobalKey anchorKey,
     StateSetter setState,
   ) {
     return List.generate(100, (index) {
+      /// 選択されたラジオボタン付リストアイテムは目印をつける
       final title =
           index == currentValue ? '$index <<< This is TargetIndex' : '$index';
       return RadioListTile<int>(
@@ -112,7 +142,7 @@ class _MyHomePageState extends State<MyHomePage> {
         onChanged: (int? value) {
           if (value != null) {
             setState(() {
-              target = value;
+              tmpTarget = value;
             });
           }
         },
