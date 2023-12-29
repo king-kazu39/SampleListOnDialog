@@ -100,7 +100,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       children: [
                         ElevatedButton(
                           onPressed: () {
-                            tmpTarget = 0;
+                            tmpTarget = target;
                             Navigator.pop(context);
                           },
                           child: const Text('キャンセル'),
