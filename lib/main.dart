@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+/// showMyDialogメソッドを修正していて、差分がわかるように別ファイルでも同じメソッド名にしているため
+/// 名前衝突を避けるためにimportしたファイルに名前をつけた。
 import 'package:sample_list_on_dialog/showdialog_with_riverpod.dart' as dialog;
 
 void main() {
@@ -39,7 +42,9 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  // 最終的に決定した時の選択値になる
   int target = 0;
+  // 一時的な選択値を保持する
   int tmpTarget = 0;
 
   @override
@@ -101,6 +106,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       children: [
                         ElevatedButton(
                           onPressed: () {
+                            // 最終的な選択値を一時的な選択値に戻す
                             tmpTarget = target;
                             Navigator.pop(context);
                           },
@@ -108,6 +114,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         ),
                         ElevatedButton(
                           onPressed: () {
+                            // 一時的な選択値を最終の選択値にする
                             target = tmpTarget;
                             Navigator.pop(context);
                           },
