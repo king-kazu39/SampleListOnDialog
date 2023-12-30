@@ -74,6 +74,7 @@ class _MyHomePageState extends State<MyHomePage> {
     });
     showDialog(
       context: context,
+      barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
           content: StatefulBuilder(builder: (context, setState) {
@@ -100,7 +101,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       children: [
                         ElevatedButton(
                           onPressed: () {
-                            tmpTarget = 0;
+                            tmpTarget = target;
                             Navigator.pop(context);
                           },
                           child: const Text('キャンセル'),
