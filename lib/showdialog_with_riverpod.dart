@@ -5,6 +5,7 @@ final numberListProvider = Provider(
   (ref) => List.generate(100, (index) => index),
 );
 
+// 最終的に決定した時の選択値になる
 final targetProvider = StateProvider<int>((ref) => 0);
 // 一時的に選択値を保持する
 final temporaryTargetProvider = StateProvider<int>((ref) => 0);
@@ -52,6 +53,7 @@ void showMyDialog(BuildContext context) {
                           onPressed: () {
                             final tempTarget =
                                 ref.read(temporaryTargetProvider);
+                            // 一時的な選択値を最終の選択値にする
                             ref.read(targetProvider.notifier).state =
                                 tempTarget;
                             Navigator.pop(context);
