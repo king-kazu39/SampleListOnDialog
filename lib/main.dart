@@ -74,6 +74,7 @@ class _MyHomePageState extends State<MyHomePage> {
     });
     showDialog(
       context: context,
+      barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
           content: StatefulBuilder(builder: (context, setState) {

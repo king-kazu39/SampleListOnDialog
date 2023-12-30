@@ -17,6 +17,7 @@ void showMyDialog(BuildContext context) {
   });
   showDialog(
     context: context,
+    barrierDismissible: false,
     builder: (BuildContext context) {
       return Consumer(
         builder: (context, ref, _) {
@@ -51,10 +52,8 @@ void showMyDialog(BuildContext context) {
                           onPressed: () {
                             final tempTarget =
                                 ref.read(temporaryTargetProvider);
-                            if (tempTarget != 0) {
-                              ref.read(targetProvider.notifier).state =
-                                  tempTarget;
-                            }
+                            ref.read(targetProvider.notifier).state =
+                                tempTarget;
                             Navigator.pop(context);
                           },
                           child: const Text('OK'),
